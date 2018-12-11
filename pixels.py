@@ -16,9 +16,9 @@ class Pixels:
 
     def __init__(self):
         self.basis = [0] * 3 * self.PIXELS_N
-        self.basis[0] = 1
-        self.basis[4] = 1
-        self.basis[8] = 1
+        self.basis[2] = 3
+        self.basis[5] = 6
+        self.basis[8] = 3
 
         self.colors = [0] * 3 * self.PIXELS_N
         self.dev = APA102(num_led=self.PIXELS_N)
