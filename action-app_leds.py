@@ -3,9 +3,37 @@
 
 import paho.mqtt.client as mqtt
 import pixels
+import os
 
+try:
+    addr_35 = [a == "UU\n" for a in os.popen("i2cdetect -y  1 0x35 0x35 | grep UU | awk '{print $2}'").readlines()]
+    addr_35.append(False)
+    addr_3b = [a == "UU\n" for a in os.popen("i2cdetect -y  1 0x3b 0x3b | grep UU | awk '{print $2}'").readlines()]
+    addr_3b.append(False)
+    addr_1a = [a == "UU\n" for a in os.popen("i2cdetect -y  1 0x1a 0x1a | grep UU | awk '{print $2}'").readlines()]
+    addr_1a.append(False)
+    addr = [addr_1a, addr_35, addr_3b]
 
-leds = pixels.pixels
+    if addr[0][0] and (not addr[1][0]):
+        # 2mic
+        import pixels
+        leds = pixels.pixels
+        print('using 2mic')
+
+    elif addr[2][0]:
+        # 4mic or 6mic
+        print('using 4mic or 6mic')
+        from gpiozero import LED
+        led = LED(5)
+        led.on()
+        from pixel_ring import pixel_ring
+        leds = pixel_ring
+    else:
+        print("can't detect pi hat")
+        os._exit(1)
+
+except Exception as e:
+    print("Error: {}".format(e))
 
 
 def on_connect(client, userdata, flags, rc):
